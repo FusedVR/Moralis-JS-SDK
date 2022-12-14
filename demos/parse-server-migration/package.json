@@ -16,10 +16,12 @@
     "graphql-ws": "^5.10.1",
     "moralis": "^2.9.0",
     "ngrok": "^4.3.3",
+    "parse-dashboard": "^5.0.0",
     "parse-server": "^5.2.7"
   },
   "devDependencies": {
     "@moralisweb3/eslint-config": "^1.0.1",
+    "@types/cors": "^2.8.13",
     "@typescript-eslint/eslint-plugin": "^5.45.1",
     "@typescript-eslint/parser": "^5.45.1",
     "axios": "^0.27.2",

@@ -56,4 +56,12 @@ export default cleanEnv(process.env, {
     desc: 'Webhook url for streams sync',
     default: '/streams-webhook',
   }),
+  DASH_USER : str({
+    desc: 'Username for the Dashboard',
+    default: 'fusedvr',
+  }),
+  DASH_PASS: str({
+    desc: 'Password for the Dashboard',
+    default: 'password',
+  }),
 });
