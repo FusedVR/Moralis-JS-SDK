@@ -9,6 +9,9 @@ import http from 'http';
 import ngrok from 'ngrok';
 import { streamsSync } from '@moralisweb3/parse-server';
 
+        // Import parseDashboard // 
+import { parseDashboard } from './parseDashboard';
+
 export const app = express();
 
 Moralis.start({
@@ -28,6 +31,9 @@ app.use(
 );
 
 app.use(`/server`, parseServer.app);
+
+// Add the new route // 
+app.use(`/dashboard`, parseDashboard);
 
 const httpServer = http.createServer(app);
 httpServer.listen(config.PORT, async () => {

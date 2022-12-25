@@ -5,6 +5,11 @@ import './generated/evmApi';
 import './generated/solApi';
 import { requestMessage } from '../auth/authService';
 
+import './cloud';
+
+//import your file
+import './job';
+
 Parse.Cloud.define('requestMessage', async ({ params }: any) => {
   const { address, chain, networkType } = params;
 
