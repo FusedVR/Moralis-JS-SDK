@@ -21,3 +21,5 @@ Parse.Cloud.job("Clean Player App Codes older than 10 minutes", async function (
 
   message("Finished Player Code Clean-up");
 });
+
+//TODO create a job to update free tier monthly

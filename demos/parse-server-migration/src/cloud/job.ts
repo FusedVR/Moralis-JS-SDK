@@ -87,16 +87,14 @@ Parse.Cloud.afterSave("CaskSubCanceledLogs", async function (request : any) {
 
 Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
   var subID = "";
-  if (request.object.get("subscribed")) {
+  if (request.object.get("subscribed")) { //only if subscribed do we create sub stats
     subID = request.object.get("subscriptionId");
-  } else {
-    subID = "free"; //canceled so revert to the free tier. must have sub ID with free as keyword
-  }
 
-  var attributes = { subscriptionId : subID, apiCalls : 0 , emailCalls : 0 };
-  var SubStatsDefinition = Parse.Object.extend("SubStats");
-  var subStats = new SubStatsDefinition(attributes);
-  await subStats.save(null, {useMasterKey : true});
+    var attributes = { subscriptionId : subID, apiCalls : 0 , emailCalls : 0 };
+    var SubStatsDefinition = Parse.Object.extend("SubStats");
+    var subStats = new SubStatsDefinition(attributes);
+    await subStats.save(null, {useMasterKey : true});
+  }
 
   scheduler.recreateSchedule(request.object.id);
 });
