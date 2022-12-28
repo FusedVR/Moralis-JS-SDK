@@ -31,7 +31,7 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
     if (plan) { //could also check if the provider is me if needed
       logger.info("Subscription Id " + request.object.get("subscriptionId"));
 
-      var user = await Parse.User.me(sessionID, {useMasterKey : true});
+      var user = await Parse.User.me( request.object.get("ref"), {useMasterKey : true}); //ref should be session id
       var attributes = { subscriptionId : request.object.get("subscriptionId"), "planId" : request.object.get("planId") , 
         address : request.object.get("consumer").toLowerCase(), user : user, subscribed : true };
       var SubsDefinition = Parse.Object.extend("Subscriptions");
