@@ -30,8 +30,9 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
 
     if (plan) { //could also check if the provider is me if needed
       logger.info("Subscription Id " + request.object.get("subscriptionId"));
+      var refId = Buffer.from(request.object.get("ref").substring(2), "hex").toString(); //ref should be session id. need to convert bytes to string
 
-      var user = await Parse.User.me( request.object.get("ref"), {useMasterKey : true}); //ref should be session id
+      var user = await Parse.User.me( refId, {useMasterKey : true}); 
       var attributes = { subscriptionId : request.object.get("subscriptionId"), "planId" : request.object.get("planId") , 
         address : request.object.get("consumer").toLowerCase(), user : user, subscribed : true };
       var SubsDefinition = Parse.Object.extend("Subscriptions");
