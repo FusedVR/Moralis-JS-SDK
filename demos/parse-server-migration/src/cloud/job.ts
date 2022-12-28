@@ -20,7 +20,6 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
 
   logger.info("Sub Create is Confirmed : " + confirmed);
   logger.info("Plan Id " + request.object.get("planId"));
-  logger.info("Reference Id " + request.object.get("ref"));
 
   if (confirmed){
     var PlansDefinition = Parse.Object.extend("PlanLimits");
@@ -30,9 +29,10 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
 
     if (plan) { //could also check if the provider is me if needed
       logger.info("Subscription Id " + request.object.get("subscriptionId"));
-      var refId = Buffer.from(request.object.get("ref").substring(2), "hex").toString(); //ref should be session id. need to convert bytes to string
+      var sessionId = Buffer.from(request.object.get("ref").substring(2), "hex").toString(); //ref should be session id. need to convert bytes to string
+      logger.info("Reference Id " + sessionId);
 
-      var user = await Parse.User.me( refId, {useMasterKey : true}); 
+      var user = await Parse.User.me( sessionId, {useMasterKey : true}); 
       var attributes = { subscriptionId : request.object.get("subscriptionId"), "planId" : request.object.get("planId") , 
         address : request.object.get("consumer").toLowerCase(), user : user, subscribed : true };
       var SubsDefinition = Parse.Object.extend("Subscriptions");
