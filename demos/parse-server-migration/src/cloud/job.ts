@@ -20,6 +20,7 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
 
   logger.info("Sub Create is Confirmed : " + confirmed);
   logger.info("Plan Id " + request.object.get("planId"));
+  logger.info("Reference Id " + request.object.get("ref"));
 
   if (confirmed){
     var PlansDefinition = Parse.Object.extend("PlanLimits");
@@ -29,8 +30,10 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
 
     if (plan) { //could also check if the provider is me if needed
       logger.info("Subscription Id " + request.object.get("subscriptionId"));
+
+      var user = await Parse.User.me(sessionID, {useMasterKey : true});
       var attributes = { subscriptionId : request.object.get("subscriptionId"), "planId" : request.object.get("planId") , 
-        address : request.object.get("consumer").toLowerCase(), subscribed : true };
+        address : request.object.get("consumer").toLowerCase(), user : user, subscribed : true };
       var SubsDefinition = Parse.Object.extend("Subscriptions");
       var subscription = new SubsDefinition(attributes);
       await subscription.save(null, {useMasterKey : true}); //only need to save subscription since it needs to be assigned to app
@@ -86,9 +89,8 @@ Parse.Cloud.afterSave("CaskSubCanceledLogs", async function (request : any) {
 });
 
 Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
-  var subID = "";
   if (request.object.get("subscribed")) { //only if subscribed do we create sub stats
-    subID = request.object.get("subscriptionId");
+    var subID = request.object.get("subscriptionId");
 
     var attributes = { subscriptionId : subID, apiCalls : 0 , emailCalls : 0 };
     var SubStatsDefinition = Parse.Object.extend("SubStats");
