@@ -60,7 +60,7 @@ Parse.Cloud.afterSave("CaskSubRenewalLogs", async function (request : any) {
     let sub = await subQuery.first();
 
     if (sub) { 
-      await sub.save({subscribed : true}, {useMasterKey : true}); //update will trigger Subscription Job
+      await sub.save({subscribed : true}, {useMasterKey : true}); //update should trigger Subscription Job
     } else {
       logger.info("No associated subscription in Database for Renewal");
     }
@@ -95,10 +95,19 @@ Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
   if (request.object.get("subscribed")) { //only if subscribed do we create sub stats
     var subID = request.object.get("subscriptionId");
 
-    var attributes = { subscriptionId : subID, apiCalls : 0 , emailCalls : 0 };
-    var SubStatsDefinition = Parse.Object.extend("SubStats");
-    var subStats = new SubStatsDefinition(attributes);
-    await subStats.save(null, {useMasterKey : true});
+    var PlansDefinition = Parse.Object.extend("PlanLimits");
+    let planQuery = new Parse.Query(PlansDefinition);
+    planQuery.equalTo("planId", request.object.get("planId"));
+    let plan = await planQuery.first();
+
+    if (plan) {
+      var attributes = { subscriptionId : subID, apiCalls : 0 , emailCalls : 0, 
+        plan : plan, user : request.object.get("user") };
+      var SubStatsDefinition = Parse.Object.extend("SubStats");
+      var subStats = new SubStatsDefinition(attributes);
+      await subStats.save(null, {useMasterKey : true});
+    }
+
   }
 
   scheduler.recreateSchedule(request.object.id);
