@@ -105,7 +105,7 @@ Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
 });
 
 Parse.Cloud.afterSave("_User", async function (request : any) {
-  let planQuery = new Moralis.Query(PlanLimits.PlansDefinition);
+  let planQuery = new Parse.Query("PlanLimits");
   planQuery.equalTo("planId", "free"); //must be a free plan
   let plan = await planQuery.first();
 
