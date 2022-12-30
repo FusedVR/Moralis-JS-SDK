@@ -44,7 +44,6 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
         logger.info("Subscription Create Failed : No Associated Plan");
     }
   }
-
 });
 
 //on SubscriptionRenewed we need to reset analytics for the app
@@ -64,7 +63,6 @@ Parse.Cloud.afterSave("CaskSubRenewalLogs", async function (request : any) {
       logger.info("No associated subscription in Database for Renewal");
     }
   }
-
 });
 
 //cask sub cancel
@@ -97,18 +95,5 @@ Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
     await subStats.save(null, {useMasterKey : true});
 
   }
-
-});
-
-Parse.Cloud.afterSave("_User", async function (request : any) {
-  let planQuery = new Parse.Query("PlanLimits");
-  planQuery.equalTo("planId", "free"); //must be a free plan
-  let plan = await planQuery.first();
-
-  var attributes = { subscriptionId : "free-" + request.object.id, "plan" : plan , address : "N/A", 
-    subscribed : true , user : request.object};    
-  var SubDefinition = Parse.Object.extend("Subscriptions");
-  var subscription = new SubDefinition(attributes);
-  await subscription.save(null, {useMasterKey : true}); //only need to save subscription since it needs to be assigned to app
 
 });
