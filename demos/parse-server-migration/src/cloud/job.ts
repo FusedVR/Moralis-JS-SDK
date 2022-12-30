@@ -35,7 +35,7 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
       let userQuery = new Parse.Query(Parse.User);
       var user = await userQuery.get(uid, {useMasterKey : true});
       
-      var attributes = { subscriptionId : request.object.get("subscriptionId"), "planId" : request.object.get("planId") , 
+      var attributes = { subscriptionId : request.object.get("subscriptionId"), "plan" : plan , 
         address : request.object.get("consumer").toLowerCase(), user : user, subscribed : true };
       var SubsDefinition = Parse.Object.extend("Subscriptions");
       var subscription = new SubsDefinition(attributes);
@@ -93,20 +93,11 @@ Parse.Cloud.afterSave("CaskSubCanceledLogs", async function (request : any) {
 
 Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
   if (request.object.get("subscribed")) { //only if subscribed do we create sub stats
-    var subID = request.object.get("subscriptionId");
 
-    var PlansDefinition = Parse.Object.extend("PlanLimits");
-    let planQuery = new Parse.Query(PlansDefinition);
-    planQuery.equalTo("planId", request.object.get("planId"));
-    let plan = await planQuery.first();
-
-    if (plan) {
-      var attributes = { subscriptionId : subID, apiCalls : 0 , emailCalls : 0, 
-        plan : plan, user : request.object.get("user") };
-      var SubStatsDefinition = Parse.Object.extend("SubStats");
-      var subStats = new SubStatsDefinition(attributes);
-      await subStats.save(null, {useMasterKey : true});
-    }
+    var attributes = { sub : request.object, apiCalls : 0 , emailCalls : 0 };
+    var SubStatsDefinition = Parse.Object.extend("SubStats");
+    var subStats = new SubStatsDefinition(attributes);
+    await subStats.save(null, {useMasterKey : true});
 
   }
 
