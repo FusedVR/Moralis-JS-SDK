@@ -45,7 +45,6 @@ Parse.Cloud.afterSave("CaskSubCreateLogs", async function (request : any) {
     }
   }
 
-  scheduler.recreateSchedule(request.object.id);
 });
 
 //on SubscriptionRenewed we need to reset analytics for the app
@@ -66,7 +65,6 @@ Parse.Cloud.afterSave("CaskSubRenewalLogs", async function (request : any) {
     }
   }
 
-  scheduler.recreateSchedule(request.object.id);
 });
 
 //cask sub cancel
@@ -88,7 +86,6 @@ Parse.Cloud.afterSave("CaskSubCanceledLogs", async function (request : any) {
     }
   }
 
-  scheduler.recreateSchedule(request.object.id);
 });
 
 Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
@@ -101,7 +98,6 @@ Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
 
   }
 
-  scheduler.recreateSchedule(request.object.id);
 });
 
 Parse.Cloud.afterSave("_User", async function (request : any) {
@@ -115,5 +111,4 @@ Parse.Cloud.afterSave("_User", async function (request : any) {
   var subscription = new SubDefinition(attributes);
   await subscription.save(null, {useMasterKey : true}); //only need to save subscription since it needs to be assigned to app
 
-  scheduler.recreateSchedule(request.object.id);
 });
