@@ -103,3 +103,17 @@ Parse.Cloud.afterSave("Subscriptions", async function (request : any) {
 
   scheduler.recreateSchedule(request.object.id);
 });
+
+Parse.Cloud.afterSave("_User", async function (request : any) {
+  let planQuery = new Moralis.Query(PlanLimits.PlansDefinition);
+  planQuery.equalTo("planId", "free"); //must be a free plan
+  let plan = await planQuery.first();
+
+  var attributes = { subscriptionId : "free-" + request.object.id, "plan" : plan , address : "N/A", 
+    subscribed : true , user : request.object};    
+  var SubDefinition = Parse.Object.extend("Subscriptions");
+  var subscription = new SubDefinition(attributes);
+  await subscription.save(null, {useMasterKey : true}); //only need to save subscription since it needs to be assigned to app
+
+  scheduler.recreateSchedule(request.object.id);
+});
